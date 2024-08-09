@@ -76,7 +76,7 @@ exports.deleteUserById = async (req, res,next) => {
 };
 
 
-exports.getAllUsersWithAddresses = async (req, res,next) => {
+exports.getAllUsersWithAddresses = async (req, res, next) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).send('Access denied');
@@ -84,15 +84,13 @@ exports.getAllUsersWithAddresses = async (req, res,next) => {
 
     const cachedUsers = await cache.get('all_users_with_addresses');
     if (cachedUsers) {
-     res.success({ users: JSON.parse(cachedUsers) });
-     return next();
+      return res.success({ users: JSON.parse(cachedUsers) });
     }
 
-    const users = await User.find();
-    await cache.set('all_users_with_addresses',users);
+    const users = await User.find().populate('addresses').exec();
+    await cache.set('all_users_with_addresses', JSON.stringify(users));
 
-    res.success({  message: 'admin user has access to all addresses', users });
-    next();
+    res.success({ message: 'Admin user has access to all users with their addresses', users });
   } catch (err) {
     next(err);
   }

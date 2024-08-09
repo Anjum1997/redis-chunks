@@ -10,7 +10,7 @@ exports.uploadChunk = async (req, res) => {
       return res.status(400).json({ message: 'Chunk file missing' });
     }
 
-    const chunkDir = path.join(__dirname, '../uploads', fileId);
+    const chunkDir = path.join(__dirname, `../uploads/${fileId}`);
     if (!fs.existsSync(chunkDir)) {
       fs.mkdirSync(chunkDir, { recursive: true });
     }
@@ -21,7 +21,7 @@ exports.uploadChunk = async (req, res) => {
 
     const files = fs.readdirSync(chunkDir);
     if (files.length === Number(totalChunks)) {
-      const finalPath = path.join(__dirname, '../uploads', fileName);
+      const finalPath = path.join(__dirname, `../uploads/${fileName}`);
       const writeStream = fs.createWriteStream(finalPath);
 
       function appendToFileStream(index) {
@@ -41,6 +41,7 @@ exports.uploadChunk = async (req, res) => {
           writeStream.end();
         }
       }
+      
 
       writeStream.on('finish', () => {
         fs.rmdirSync(chunkDir, { recursive: true });

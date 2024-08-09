@@ -13,6 +13,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Route for handling chunked uploads
 router.post('/upload', upload.single('chunk'), uploadController.uploadChunk);
 
 module.exports = router;
